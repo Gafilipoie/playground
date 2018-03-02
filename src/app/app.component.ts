@@ -23,7 +23,7 @@ export class AppComponent implements OnInit {
         private sliceStep: SliceStepPipe) {}
 
     ngOnInit() {
-        this.message = 'Hello WorldHello WorldHello WorldHello WorldHello WorldHello WorldHello WorldHello World';
+        this.message = 'Hello World';
         this.s = 1;
         this.messageArray = this.message.split('');
 
@@ -37,7 +37,6 @@ export class AppComponent implements OnInit {
     encrypt(msg: string, s: number) {
         let k: number[] = this.charCode.transform(msg);
         let parity: number = 2 * s;
-        let n: number = k.length + parity;
         console.log(`Encrypt Message '${msg}' with a length of ${k.length} where a parity length of ${parity} is added`);
 
         // Each codeword contains 255 code word bytes, of which 223 bytes are data and 32 bytes are parity
@@ -56,7 +55,7 @@ export class AppComponent implements OnInit {
         if (msgIn.length + parity > 255)
             throw 'Message too long.';
 
-        let gen: number[] = this.generatePolinom(parity);
+        let polinom: number[] = this.generatePolinom(parity);
         let msgOut: number[] = this.arrayFill.transform(msgIn.length + parity, 0);
 
         for (let i = 0; i < msgIn.length; i++) {
@@ -66,8 +65,8 @@ export class AppComponent implements OnInit {
         for (let i = 0; i < msgIn.length; i++) {
             let coef: number = msgOut[i];
             if (coef != 0) {
-                for (let j = 0; j < gen.length; j++) {
-                    msgOut[i + j] ^= this.galoisField.mul(gen[j], coef);
+                for (let j = 0; j < polinom.length; j++) {
+                    msgOut[i + j] ^= this.galoisField.mul(polinom[j], coef);
                 }
             }
         }
