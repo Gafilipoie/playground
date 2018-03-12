@@ -38,7 +38,7 @@ export class AppComponent implements OnInit {
         encrypted[1] = 2;
         console.log(`Message with error: [${encrypted.toString()}]`);
 
-        let decrypted = this.decrypt.init(encrypted, p);
+        let decrypted: number[] = this.decrypt.init(encrypted, p);
         console.log(`Decrypted Message: [${decrypted.toString()}]`);
     }
 }

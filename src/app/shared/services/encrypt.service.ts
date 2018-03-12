@@ -22,7 +22,7 @@ export class EncryptService {
                 result = result * x + i;
             }
             result *= x;
-            return this.modulo.transform(result, p);
+            return this.modulo.transform(result, p); // result % p
         };
 
         for (let i of this.range.transform(1, n)) {

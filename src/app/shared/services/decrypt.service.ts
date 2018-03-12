@@ -13,18 +13,18 @@ export class DecryptService {
         private modulo: ModuloPipe,
         private range: RangePipe) {}
 
-    init(encrypted, p) {
-        let zIndexes = [];
-        let n = encrypted.length;
-        let k = n - 2;
-        let arrayOfSubsets = [];
+    init(encrypted: number[], p: number): number[] {
+        let zIndexes: number[] = [];
+        let n: number = encrypted.length;
+        let k: number = n - 2;
+        let arrayOfSubsets: number[][] = [];
 
 
         for (let i of this.range.transform(1, n)) {
             zIndexes.push(i);
         }
 
-        let combinations = (list, k, arrayOfSubsets) => {
+        let combinations = (list: number[], k: number, arrayOfSubsets: number[][]): number[][] => {
             if (list.length == k) {
                 let a: string = JSON.stringify(arrayOfSubsets);
                 let b: string = JSON.stringify(list)
@@ -37,8 +37,8 @@ export class DecryptService {
                 return [[]];
             }
             for (let elem of list) {
-                let subList = list.slice();
-                let index = subList.indexOf(elem);
+                let subList: number[] = list.slice();
+                let index: number = subList.indexOf(elem);
                 if (index > -1) {
                     subList.splice(index, 1);
                 }
@@ -48,21 +48,23 @@ export class DecryptService {
             return arrayOfSubsets;
         };
 
-        let subsetsA = combinations(zIndexes, k, arrayOfSubsets);
-        console.log('All subsets: ', subsetsA);
+        let subsetsA: number[][] = combinations(zIndexes, k, arrayOfSubsets);
+        console.log('All A[] subsets: ', subsetsA);
 
 
-        let modularInverse = (a, m) => {
-            let [g, x, y] = this.cmmdc.transform(a, m);
+        let subsetA: number[] = [];
+
+        let modularInverse = (a: number, m: number): number => {
+            let [g, x, y]: number[] = this.cmmdc.transform(a, m);
             if (g != 1) {
                 throw "Nu exista invers modular";
             }
-            return x % m;
+            return this.modulo.transform(x, m); // x % m
         }
 
-        let productSubset = (subset, i, base) => {
-            let product = 1;
-            let productNumitori = 1;
+        let productSubset = (subset: number[], i: number, base: number): number => {
+            let product: number = 1;
+            let productNumitori: number = 1;
 
             for (let j of subset) {
                 if (j != i) {
@@ -77,18 +79,16 @@ export class DecryptService {
             return product * modularInverse(productNumitori, base);
         }
 
-        let fcCheck = (subset, encrypted, p) => {
-            let sum = 0;
+        let fcCheck = (subset: number[], encrypted: number[], p: number): number => {
+            let sum: number = 0;
             for (let i of subset) {
                 sum += encrypted[i-1] * productSubset(subset, i, p);
             }
             return sum % p;
         }
 
-        let subsetA = [];
-
         for (let subset of subsetsA) {
-            let fc = fcCheck(subset, encrypted, p);
+            let fc: number = fcCheck(subset, encrypted, p);
             if (Object.is(fc, 0)) {
                 subsetA = subset;
                 break;
@@ -97,13 +97,13 @@ export class DecryptService {
         console.log(`fc = 0 for subset: [${subsetA}]`);
 
 
-        let big_poly = [0];
-        let current_poly = [];
+        let pX: number[] = [0];
+        let current_poly: number[] = [];
 
-        let productPolinoms = (p1, p2) => {
-            let coefficients = Array.apply(null, Array(p2.length + p1.length - 1)).map(Number.prototype.valueOf,0);
-            p1.map((coef1, index1) => {
-                p2.map((coef2, index2) => {
+        let productPolinoms = (p1: number[], p2: number[]): number[] => {
+            let coefficients: number[] = Array.apply(null, Array(p2.length + p1.length - 1)).map(Number.prototype.valueOf,0);
+            p1.map((coef1: number, index1: number) => {
+                p2.map((coef2: number, index2: number) => {
                     coefficients[index1 + index2] += (coef1 * coef2);
                 });
             });
@@ -111,9 +111,9 @@ export class DecryptService {
             return coefficients;
         }
 
-        let sumPolinoms = (p1, p2) => {
-            big_poly = [];
-            let arr = [];
+        let sumPolinoms = (p1: number[], p2: number[]): number[] => {
+            pX = [];
+            let arr: number[] = [];
             for (let i = 0; i < Math.max(p1.length, p2.length); i++) {
                 arr.push((p1[i] || 0) + (p2[i] || 0));
             }
@@ -122,14 +122,14 @@ export class DecryptService {
 
         for (let i of subsetA) {
             current_poly = [1];
-            let zIndex = encrypted[i-1];
-            let productNumitor = 1;
+            let zIndex: number = encrypted[i-1];
+            let productNumitor: number = 1;
             for (let j of subsetA) {
                 if (j != i) {
-                    let rank_1_poly = [1, -j];
-                    productNumitor = this.modulo.transform((productNumitor * (i - j)), p);
+                    let rank_1_poly: number[] = [1, -j];
+                    productNumitor = this.modulo.transform((productNumitor * (i - j)), p); // (productNumitor * (i - j)) % p
                     for (let x of productPolinoms(current_poly, rank_1_poly)) {
-                        current_poly.push(this.modulo.transform(x, p));
+                        current_poly.push(this.modulo.transform(x, p)); // x % p
                     }
                 }
             }
@@ -138,15 +138,15 @@ export class DecryptService {
             }
 
             for (let curr = 0; curr < current_poly.length; curr++) {
-                current_poly[curr] = this.modulo.transform(zIndex * current_poly[curr] * modularInverse(productNumitor, p), p);
+                current_poly[curr] = this.modulo.transform(zIndex * current_poly[curr] * modularInverse(productNumitor, p), p); // (zIndex * current_poly[curr] * modularInverse(productNumitor, p)) % p
             }
 
-            for (let x of sumPolinoms(big_poly, current_poly)) {
-                big_poly.push(this.modulo.transform(x, p));
+            for (let x of sumPolinoms(pX, current_poly)) {
+                pX.push(this.modulo.transform(x, p)); // x % p
             }
         }
 
-        // console.log(`Coeficientii polinomului final, adica mesajul decodat: ${big_poly}`);
-        return big_poly;
+        // console.log(`Coeficientii polinomului final, adica mesajul decodat: ${pX}`);
+        return pX;
     }
 }
