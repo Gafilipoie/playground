@@ -2,16 +2,17 @@ import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
 // Services
-import { EncryptService } from '../shared/services/encrypt.service';
-import { DecryptService } from '../shared/services/decrypt.service';
+import { EncryptService } from '../../shared/services/encrypt.service';
+import { DecryptService } from '../../shared/services/decrypt.service';
 
 // Pipes
-import { ToBasePipe } from '../shared/pipes/toBase.pipe';
+import { ToBasePipe } from '../../shared/pipes/toBase.pipe';
 
 @Component({
-    templateUrl: './tema1ReedSolomon.component.html'
+    templateUrl: './reedSolomon.component.html',
+    styleUrls: [ './reedSolomon.component.scss' ]
 })
-export class ActnTema1ReedSolomonComponent implements OnInit {
+export class ReedSolomonComponent implements OnInit {
     rs_m: number;
     rs_s: number;
     rs_p: number;

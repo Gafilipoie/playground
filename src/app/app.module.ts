@@ -10,7 +10,8 @@ import { ErrorComponent } from './error/error.component';
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './header/header.component';
 import { HomeComponent } from './home/home.component';
-import { ActnTema1ReedSolomonComponent } from './actn/tema1ReedSolomon.component';
+import { ReedSolomonComponent } from './actn/tema1/reedSolomon.component';
+import { RsaComponent } from './actn/tema2/rsa.component';
 
 // Services
 import { EncryptService } from './shared/services/encrypt.service';
@@ -34,7 +35,8 @@ import { ToBasePipe } from './shared/pipes/toBase.pipe';
         AppComponent,
         HeaderComponent,
         HomeComponent,
-        ActnTema1ReedSolomonComponent
+        ReedSolomonComponent,
+        RsaComponent
     ],
     providers: [
         EncryptService,
