@@ -4,6 +4,7 @@ import { NgForm } from '@angular/forms';
 // Pipes
 import { CmmdcPipe } from '../../shared/pipes/cmmdc.pipe';
 import { ModuloPipe } from '../../shared/pipes/modulo.pipe';
+import { RangePipe } from '../../shared/pipes/range.pipe';
 
 @Component({
     templateUrl: './rsa.component.html',
@@ -15,7 +16,8 @@ export class RsaComponent implements OnInit {
 
     constructor(
         private cmmdc: CmmdcPipe,
-        private modulo: ModuloPipe) {}
+        private modulo: ModuloPipe,
+        private range: RangePipe) {}
 
     ngOnInit() {
         this.rsa();
@@ -27,37 +29,66 @@ export class RsaComponent implements OnInit {
     //     ngForm.form.reset();
     // }
 
+    isPrime(num: number, test_count: number) {
+        if (num == 1) return false;
+        if (test_count >= num) test_count = num - 1;
+
+        for (let i of this.range.transform(1, test_count)) {
+            let val: number = bigInt.randBetween(num - 1, 1);
+            if (bigInt(val).modPow(num - 1, num) != 1) return false
+        }
+
+        return true;
+    }
+
+    primeWithBits(n: number) {
+        let isPrime: boolean = false;
+        while (!isPrime) {
+            let p: number = bigInt.randBetween(bigInt(2).pow(n), bigInt(2).pow(n - 1));
+            if this.isPrime(p, 1000) {
+                return p;
+            }
+        }
+    }
+
     multiPowRsa() {
         console.log("----------------Multi-pow RSA-------------------");
-        let e = 5;
-
-        let p = 3;
-        let q = 5;
+        let p = this.primeWithBits(7);
+        let q = this.primeWithBits(7);
 
         let n = Math.pow(p, 2) * q;
         console.log(`n: ${n}`);
 
-        let fi = p * (p - 1) * (q - 1);
-        console.log(`fi: ${fi}`);
+        let phiN = p * (p - 1) * (q - 1);
+        console.log(`phiN: ${phiN}`);
 
         let modularInverse = (a: number, m: number): number => {
             let [g, x, y]: number[] = this.cmmdc.transform(a, m);
             if (g != 1) {
                 throw "Nu exista invers modular";
             }
-            return this.modulo.transform(x, m); // x % m
+            return this.modulo.transform(x, m);
         }
-        let d = modularInverse(e, fi);
+
+        let e = 5;
+        let d = modularInverse(e, phiN);
         console.log(`d: ${d}`);
 
-        let plainText = Math.floor(Math.random() * (n - 1));
-        console.log(`plainText: ${plainText}`);
+        let x = Math.floor(Math.random() * (n - 1));
+        console.log(`x: ${x}`);
 
-        let cryptoText = this.modulo.transform(Math.pow(plainText, e), n);
-        console.log(`cryptoText: ${cryptoText}`);
+        let cypher = bigInt(x).modPow(e, n);
+        console.log(`cypher: ${cypher}`);
 
-        let decryptedText = this.modulo.transform(Math.pow(cryptoText, d), n);
-        console.log(`decryptedText: ${decryptedText}`);
+        let startTime: any = performance.now();
+
+        let decrypt = bigInt(cypher).modPow(d, n);
+        console.log(`decrypt: ${decrypt}`);
+
+        let endTime: any = performance.now();
+
+        let runningTime: any = endTime - startTime;
+        console.log(`Decrypt time: ${runningTime}`);
     }
 
     rsa() {
