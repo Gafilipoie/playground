@@ -53,8 +53,8 @@ export class RsaComponent implements OnInit {
 
     multiPowRsa() {
         console.log("----------------Multi-pow RSA-------------------");
-        let p = this.primeWithBits(7);
-        let q = this.primeWithBits(7);
+        let p = this.primeWithBits(16);
+        let q = this.primeWithBits(16);
 
         let n = Math.pow(p, 2) * q;
         console.log(`n: ${n}`);
