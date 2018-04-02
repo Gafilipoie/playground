@@ -23,7 +23,7 @@ export class RsaComponent implements OnInit {
         private range: RangePipe) {}
 
     ngOnInit() {
-        this.rsa(16);
+        this.rsa(60);
     }
 
     // onSubmit(ngForm: NgForm) {
@@ -91,11 +91,11 @@ export class RsaComponent implements OnInit {
         let r: number = this.primeWithBits(bits);
 
         /* n = p * q * r */
-        let n: number = p * q * r;
+        let n: number = bigInt(bigInt(p).multiply(q)).multiply(r);
         console.log(`n: ${n}`);
 
         /* phiN = (p - 1) * (q - 1) * (r - 1) */
-        let phiN: number = (p - 1) * (q - 1) * (r - 1);
+        let phiN: number = bigInt(bigInt(p - 1).multiply(q - 1)).multiply(r - 1);
         console.log(`phiN: ${phiN}`);
 
         /* d = e^(-1) mod n */
@@ -130,11 +130,11 @@ export class RsaComponent implements OnInit {
         let q: number = this.primeWithBits(bits);
 
         /* n = p^2 * q */
-        let n: number = Math.pow(p, 2) * q;
+        let n: number = bigInt(bigInt(p).pow(2)).multiply(q);
         console.log(`n: ${n}`);
 
         /* phiN = p * (p - 1) * (q - 1) */
-        let phiN: number = p * (p - 1) * (q - 1);
+        let phiN: number = bigInt(bigInt(p).multiply(p - 1)).multiply(q - 1);
         console.log(`phiN: ${phiN}`);
 
         /* d = e^(-1) mod n */
