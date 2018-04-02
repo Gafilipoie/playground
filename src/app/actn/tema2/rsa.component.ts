@@ -65,11 +65,13 @@ export class RsaComponent implements OnInit {
 
     rsaTCR(y: number, d: number, p: number, q: number, r: number) {
         /* yp = (y mod p)^d mod (p-1) mod p */
-        let yp: number = bigInt(this.modulo.transform(y, p)).modPow(this.modulo.transform(d, p-1), p);
+        let yp: number = bigInt(this.modulo.transform(y, p)).modPow(this.modulo.transform(d, p - 1), p);
+
         /* yq = (y mod q)^d mod (q-1) mod q */
-        let yq: number = bigInt(this.modulo.transform(y, q)).modPow(this.modulo.transform(d, q-1), q);
+        let yq: number = bigInt(this.modulo.transform(y, q)).modPow(this.modulo.transform(d, q - 1), q);
+
         /* yp = (y mod r)^d mod (r-1) mod r */
-        let yr: number = bigInt(this.modulo.transform(y, r)).modPow(this.modulo.transform(d, r-1), r);
+        let yr: number = bigInt(this.modulo.transform(y, r)).modPow(this.modulo.transform(d, r - 1), r);
 
         let b_p: number = q * r;
         let b_q: number = p * r;
@@ -112,7 +114,8 @@ export class RsaComponent implements OnInit {
         let startTime: any = moment();
 
         /* x = y^d mod n */
-        let decrypt: number = bigInt(cypher).modPow(d, n);
+        // let decrypt: number = bigInt(cypher).modPow(d, n);
+        let decrypt: number = this.rsaTCR(cypher, d, p, q, r);
         console.log(`decrypt: ${decrypt}`);
 
         let endTime: any = moment();
@@ -163,6 +166,6 @@ export class RsaComponent implements OnInit {
 
     rsa(bits: number) {
         this.multiPrimeRsa(bits);
-        this.multiPowRsa(bits);
+        // this.multiPowRsa(bits);
     }
 }
