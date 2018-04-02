@@ -23,7 +23,7 @@ export class RsaComponent implements OnInit {
         private range: RangePipe) {}
 
     ngOnInit() {
-        this.rsa(60);
+        this.rsa(16);
     }
 
     // onSubmit(ngForm: NgForm) {
