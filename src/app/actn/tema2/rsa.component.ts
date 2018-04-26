@@ -14,23 +14,42 @@ declare var bigInt: any;
     styleUrls: [ './rsa.component.scss' ]
 })
 export class RsaComponent implements OnInit {
-    rsa_m: number;
-    rsa_p: number;
+    n: number;
+    phiN: number;
+    modInv: string;
+    d: number;
+    x: number;
+    cypher: number;
+    decrypt: number;
+    decryptTime: number;
+    onMultiPrimeRsa: boolean;
+    onMultiPowRsa: boolean;
 
     constructor(
         private cmmdc: CmmdcPipe,
         private modulo: ModuloPipe,
         private range: RangePipe) {}
 
-    ngOnInit() {
-        this.rsa(16);
+    ngOnInit() {}
+
+    emptyTable() {
+        this.n = undefined;
+        this.phiN = undefined;
+        this.modInv = undefined;
+        this.d = undefined;
+        this.x = undefined;
+        this.cypher = undefined;
+        this.decrypt = undefined;
+        this.decryptTime = undefined;
     }
 
-    // onSubmit(ngForm: NgForm) {
-    //     this.rsa_m = ngForm.form.value.rsa_message;
-    //     this.rsa_p = ngForm.form.value.rsa_base;
-    //     ngForm.form.reset();
-    // }
+    onSubmit(ngForm: NgForm) {
+        this.emptyTable();
+        if (this.onMultiPrimeRsa) this.multiPrimeRsa(ngForm.form.value.rsa_bits);
+        if (this.onMultiPowRsa) this.multiPowRsa(ngForm.form.value.rsa_bits);
+        this.onMultiPrimeRsa = false;
+        this.onMultiPowRsa = false;
+    }
 
     isPrime(num: number, test_count: number) {
         if (num == 1) return false;
@@ -57,7 +76,8 @@ export class RsaComponent implements OnInit {
     modularInverse(a: number, m: number) {
         let [g, x, y]: number[] = this.cmmdc.transform(a, m);
         if (g != 1) {
-            throw "Nu exista invers modular";
+            this.modInv = 'Modular Inverse does not exist!';
+            throw this.modInv;
         }
         return this.modulo.transform(x, m);
     }
@@ -85,7 +105,6 @@ export class RsaComponent implements OnInit {
     }
 
     multiPrimeRsa(bits: number) {
-        console.log("----------------Multiprime RSA-------------------");
         let e: number = 5;
 
         let p: number = this.primeWithBits(bits);
@@ -93,79 +112,57 @@ export class RsaComponent implements OnInit {
         let r: number = this.primeWithBits(bits);
 
         /* n = p * q * r */
-        let n: number = bigInt(bigInt(p).multiply(q)).multiply(r);
-        console.log(`n: ${n}`);
+        this.n = bigInt(bigInt(p).multiply(q)).multiply(r);
 
         /* phiN = (p - 1) * (q - 1) * (r - 1) */
-        let phiN: number = bigInt(bigInt(p - 1).multiply(q - 1)).multiply(r - 1);
-        console.log(`phiN: ${phiN}`);
+        this.phiN = bigInt(bigInt(p - 1).multiply(q - 1)).multiply(r - 1);
 
         /* d = e^(-1) mod n */
-        let d: number = this.modularInverse(e, phiN);
-        console.log(`d: ${d}`);
+        this.d = this.modularInverse(e, this.phiN);
 
-        let x: number = Math.floor(Math.random() * (n - 1));
-        console.log(`x: ${x}`);
+        this.x = Math.floor(Math.random() * (this.n - 1));
 
         /* y = x^e mod n */
-        let cypher: number = bigInt(x).modPow(e, n);
-        console.log(`cypher: ${cypher}`);
+        this.cypher = bigInt(this.x).modPow(e, this.n);
 
         let startTime: any = moment();
 
         /* x = y^d mod n */
-        // let decrypt: number = bigInt(cypher).modPow(d, n);
-        let decrypt: number = this.rsaTCR(cypher, d, p, q, r);
-        console.log(`decrypt: ${decrypt}`);
+        // this.decrypt = bigInt(this.cypher).modPow(this.d, this.n);
+        this.decrypt = this.rsaTCR(this.cypher, this.d, p, q, r);
 
         let endTime: any = moment();
 
-        let runningTime: number = endTime.diff(startTime);
-        console.log(`Decrypt time: ${runningTime} milliseconds`);
-        console.log(`Is x equal to decrypt? ${x == decrypt}`);
+        this.runningTime = endTime.diff(startTime);
     }
 
     multiPowRsa(bits: number) {
-        console.log("----------------Multipow RSA-------------------");
         let e: number = 5;
 
         let p: number = this.primeWithBits(bits);
         let q: number = this.primeWithBits(bits);
 
         /* n = p^2 * q */
-        let n: number = bigInt(bigInt(p).pow(2)).multiply(q);
-        console.log(`n: ${n}`);
+        this.n = bigInt(bigInt(p).pow(2)).multiply(q);
 
         /* phiN = p * (p - 1) * (q - 1) */
-        let phiN: number = bigInt(bigInt(p).multiply(p - 1)).multiply(q - 1);
-        console.log(`phiN: ${phiN}`);
+        this.phiN = bigInt(bigInt(p).multiply(p - 1)).multiply(q - 1);
 
         /* d = e^(-1) mod n */
-        let d: number = this.modularInverse(e, phiN);
-        console.log(`d: ${d}`);
+        this.d = this.modularInverse(e, this.phiN);
 
-        let x: number = Math.floor(Math.random() * (n - 1));
-        console.log(`x: ${x}`);
+        this.x = Math.floor(Math.random() * (this.n - 1));
 
         /* y = x^e mod n */
-        let cypher: number = bigInt(x).modPow(e, n);
-        console.log(`cypher: ${cypher}`);
+        this.cypher = bigInt(this.x).modPow(e, this.n);
 
         let startTime: any = moment();
 
         /* x = y^d mod n */
-        let decrypt: number = bigInt(cypher).modPow(d, n);
-        console.log(`decrypt: ${decrypt}`);
+        this.decrypt = bigInt(this.cypher).modPow(this.d, this.n);
 
         let endTime: any = moment();
 
-        let runningTime: number = endTime.diff(startTime);
-        console.log(`Decrypt time: ${runningTime} milliseconds`);
-        console.log(`Is x equal to decrypt? ${x == decrypt}`);
-    }
-
-    rsa(bits: number) {
-        this.multiPrimeRsa(bits);
-        // this.multiPowRsa(bits);
+        this.runningTime = endTime.diff(startTime);
     }
 }

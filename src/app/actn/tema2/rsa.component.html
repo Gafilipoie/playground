@@ -10,18 +10,13 @@
                             <div class="card-body">
                                 <form #rsaForm="ngForm" (ngSubmit)="onSubmit(rsaForm)">
                                     <div class="form-group row">
-                                        <label for="rsa_message" class="col-sm-2 col-form-label">Message:</label>
+                                        <label for="rsa_bits" class="col-sm-2 col-form-label">Bits:</label>
                                         <div class="col-sm-10">
-                                            <input id="rsa_message" type="number" name="rsa_message" class="form-control" placeholder="e.g 29" ngModel required>
+                                            <input id="rsa_bits" type="number" name="rsa_bits" class="form-control" placeholder="e.g 16" ngModel required>
                                         </div>
                                     </div>
-                                    <div class="form-group row">
-                                        <label for="rsa_base" class="col-sm-2 col-form-label">Base P:</label>
-                                        <div class="col-sm-10">
-                                            <input id="rsa_base" type="number" name="rsa_base" class="form-control" placeholder="e.g. 11" ngModel required>
-                                        </div>
-                                    </div>
-                                    <button type="submit" class="btn btn-success" [disabled]="!rsaForm.form.valid">Submit</button>
+                                    <button type="submit" class="btn btn-success" (click)="onMultiPrimeRsa=true" [disabled]="!rsaForm.form.valid">MultiPrime RSA</button>
+                                    <button type="submit" class="btn btn-success" (click)="onMultiPowRsa=true" [disabled]="!rsaForm.form.valid">MultiPow RSA</button>
                                 </form>
                             </div>
                         </div>
@@ -34,13 +29,34 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td>Message: </td>
+                                <td>n:</td>
+                                <td>{{ n }}</td>
                             </tr>
                             <tr>
-                                <td>Encrypted: </td>
+                                <td>phiN:</td>
+                                <td>{{ phiN }}</td>
                             </tr>
                             <tr>
-                                <td>Decrypted: </td>
+                                <td>d:</td>
+                                <td><span *ngIf="d">{{ d }}</span>
+                                    <span *ngIf="modInv" style="color:red;">{{ modInv }}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>x:</td>
+                                <td>{{ x }}</td>
+                            </tr>
+                            <tr>
+                                <td>Cypher:</td>
+                                <td>{{ cypher }}</td>
+                            </tr>
+                            <tr>
+                                <td>Decrypt:</td>
+                                <td>{{ decrypt }}</td>
+                            </tr>
+                            <tr>
+                                <td>Decrypt time:</td>
+                                <td>{{ runningTime }} <span *ngIf="runningTime">milliseconds</span></td>
                             </tr>
                         </tbody>
                     </table>
