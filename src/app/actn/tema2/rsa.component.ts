@@ -22,6 +22,7 @@ export class RsaComponent implements OnInit {
     cypher: number;
     decrypt: number;
     decryptTime: number;
+    runningTime: number;
     onMultiPrimeRsa: boolean;
     onMultiPowRsa: boolean;
 

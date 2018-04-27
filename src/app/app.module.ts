@@ -12,6 +12,7 @@ import { HeaderComponent } from './header/header.component';
 import { HomeComponent } from './home/home.component';
 import { ReedSolomonComponent } from './actn/tema1/reedSolomon.component';
 import { RsaComponent } from './actn/tema2/rsa.component';
+import { Tema3Component } from './actn/tema3/tema3.component';
 
 // Services
 import { EncryptService } from './shared/services/encrypt.service';
@@ -36,7 +37,8 @@ import { ToBasePipe } from './shared/pipes/toBase.pipe';
         HeaderComponent,
         HomeComponent,
         ReedSolomonComponent,
-        RsaComponent
+        RsaComponent,
+		Tema3Component
     ],
     providers: [
         EncryptService,
