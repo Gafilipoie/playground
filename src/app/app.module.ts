@@ -22,6 +22,7 @@ import { DecryptService } from './shared/services/decrypt.service';
 import { CmmdcPipe } from './shared/pipes/cmmdc.pipe';
 import { ModuloPipe } from './shared/pipes/modulo.pipe';
 import { RangePipe } from './shared/pipes/range.pipe';
+import { RandomRangePipe } from './shared/pipes/random_range.pipe';
 import { ToBasePipe } from './shared/pipes/toBase.pipe';
 
 @NgModule({
@@ -46,6 +47,7 @@ import { ToBasePipe } from './shared/pipes/toBase.pipe';
         CmmdcPipe,
         ModuloPipe,
         RangePipe,
+        RandomRangePipe,
         ToBasePipe
     ],
     bootstrap: [AppComponent]
