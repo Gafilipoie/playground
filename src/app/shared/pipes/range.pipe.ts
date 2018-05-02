@@ -7,7 +7,7 @@ export class RangePipe implements PipeTransform {
 
         if (typeof s == 'number') {
             let start: number = s;
-            let end: number = e;
+            let end: number = e - 1;
             let step: number = st;
 
             list[0] = start;

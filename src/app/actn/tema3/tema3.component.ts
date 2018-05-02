@@ -22,18 +22,22 @@ export class Tema3Component implements OnInit {
     ngOnInit() {}
 
     onSubmit(ngForm: NgForm) {
-        console.log("Simbol Jacobi pentru 1001/9907", this.legendre(1001, 9907));
-        console.log(this.solovayStrassen(1007, 25));
+        console.log("Jacobi symbol for 4/5", this.legendre(4, 5));
+        console.log("Jacobi symbol for 30/59", this.legendre(30, 59));
+        console.log("Solovay-Strassen primality test for 1007", this.solovayStrassen(1007, 15));
+        console.log("Solovay-Strassen primality test for 37", this.solovayStrassen(37, 15));
 
-        console.log("Test prim pentru 31", this.testLucas(31));
-        console.log("Test prim pentru 2047", this.testLucas(2047));
+        console.log("Lucas-Lehmer primality test for Mersenne number 11", this.testLucas(11));
+        console.log("Lucas-Lehmer primality test for Mersenne number 31", this.testLucas(31));
+        console.log("Lucas-Lehmer primality test for Mersenne number 127", this.testLucas(127));
+        console.log("Lucas-Lehmer primality test for Mersenne number 2047", this.testLucas(2047));
+        console.log("Lucas-Lehmer primality test for Mersenne number 8191", this.testLucas(8191));
     }
 
     /* Problema 1 */
-    solovayStrassen(n: number, k: number) {
+    solovayStrassen(n: number, k: number = 10) {
         if (n == 2) return true;
-        if (n !& 1) return false;
-
+        if (!(n & 1)) return false;
         for (let i of this.range.transform(0, k)) {
             let a: number = this.randomRange.transform(2, n - 1);
             let x: number = this.legendre(a, n);
@@ -63,11 +67,10 @@ export class Tema3Component implements OnInit {
 
     /* Problema 2 */
     testLucas(n: number) {
-        debugger
-        let isMersenne: number = this.mersenneNumber(n);
-        if (isMersenne == -1) return 'Number is not Mersenne Number';
+        let mersenneNr: number = this.mersenneNumber(n);
+        if (mersenneNr == -1) return 'Number is not Mersenne Number';
 
-        return this.lucasLehmer(isMersenne);
+        return this.lucasLehmer(mersenneNr);
     }
 
     mersenneNumber(n: number) {
