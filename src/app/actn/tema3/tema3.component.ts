@@ -24,7 +24,7 @@ export class Tema3Component implements OnInit {
     onSubmit(ngForm: NgForm) {
         console.log("Jacobi symbol for 4/5", this.legendre(4, 5));
         console.log("Jacobi symbol for 30/59", this.legendre(30, 59));
-        console.log("Solovay-Strassen primality test for 1007", this.solovayStrassen(1007, 15));
+        console.log("Solovay-Strassen primality test for 3097", this.solovayStrassen(3097, 15));
         console.log("Solovay-Strassen primality test for 37", this.solovayStrassen(37, 15));
 
         console.log("Lucas-Lehmer primality test for Mersenne number 11", this.testLucas(11));
